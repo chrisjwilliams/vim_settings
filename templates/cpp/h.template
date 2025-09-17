@@ -1,0 +1,19 @@
+/**
+* class %class_name%
+* Copyright (C) %Y% %Author%
+*/
+#ifndef %NAMESPACE%_%CLASS_NAME%
+#define %NAMESPACE%_%CLASS_NAME%
+
+%namespace_open%
+
+class %class_name%
+{
+    public:
+        %class_name%();
+        ~%class_name%();
+};
+
+%namespace_close%
+
+#endif // %NAMESPACE%_%CLASS_NAME%
