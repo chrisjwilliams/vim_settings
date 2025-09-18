@@ -1,7 +1,7 @@
 " VIM editor settings
-" Copyright 2025 Chris Williams, all rights reserved. 
+" Copyright 2025 Chris Williams, all rights reserved.
 " Licenced under GPL version 3.0
-" 
+"
 " Fold commands:
 "   zo: open fold
 "   zc: close fold
@@ -30,16 +30,31 @@ set statusline=\ %f\ %M\ \ buffer:\ %n\ %q\ %r\ %h
 set statusline+=%=ascii:\ %b(0x%B)\ percent:\ %p%%
 " }}}
 " HIGHLIGHTING AND SYNTAX -------------------------------------- {{{
-set matchpairs+=<:>
+syntax on
+
+if !hlexists('Todo')
+    highlight Todo ctermfg=black ctermbg=yellow
+endif
+augroup todo_highlighting
+    au!
+    au Syntax * syntax match MyTodo /\v<(FIXME|NOTE|TODO|OPTIMIZE|OPTIMISE)/ containedin=.*Comment,vimCommentTitle
+augroup END
+highlight def link MyTodo Todo
 
 " make whitespace at end of lines visible
-match Todo /\s\*$/
+match Todo /\s\+$/
+
+"set matchpairs+=<:>
+:au FileType c,cpp,java,html,xml set mps+=<:>
+
 
 " Highlight cursor line underneath the cursor vertically.
 set cursorcolumn
 
+
 " }}}
 " ABBREVIATIONS ------------------------------------------------ {{{
+nnoremap \sid :let s = synID(line('.'), col('.'), 1) \| echo synIDattr(s, 'name') . ' -> ' . synIDattr(synIDtrans(s), 'name')<CR>
 :inoreabbrev ccopy Copyright  <esc>"=strftime("%Y")<CR>Pa Chris Williams, all rights reserved.
 :inoreabbrev /** /**<CR>*<CR>*/<Up>
 
