@@ -53,19 +53,6 @@ set cursorcolumn
 
 
 " }}}
-" ABBREVIATIONS ------------------------------------------------ {{{
-nnoremap \sid :let s = synID(line('.'), col('.'), 1) \| echo synIDattr(s, 'name') . ' -> ' . synIDattr(synIDtrans(s), 'name')<CR>
-:inoreabbrev ccopy Copyright  <esc>"=strftime("%Y")<CR>Pa Chris Williams, all rights reserved.
-:inoreabbrev /** /**<CR>*<CR>*/<Up>
-
-" template mappings
-" HTML templates
-nnoremap ,html :-1read ${HOME}/.vim/templates/html/outline.html \| %s/%Y/\=strftime("%Y")/<CR>3jf
-
-" C++ templates
-nnoremap ,header :let cpp = { 'class_name': expand('%:t:r') }\| :let cpp.CLASS_NAME = substitute(cpp.class_name, '\(\w\+\)', '\U\1\E', '') \| -1read ${HOME}/.vim/templates/cpp/h.template \| %s/%Y%/\=strftime("%Y")/ \| %s/%\(\w\+\)%/\=get(cpp, submatch(1), '')/<CR>3jf
-
-" }}}
 " VIMSCRIPT ---------------------------------------------------- {{{
 
 " Enable code folding for vim files
@@ -88,4 +75,41 @@ function! SwitchSourceHeader()
 endfunction
 
 nnoremap ,s :call SwitchSourceHeader()<CR>
+
+" returns a string for the files Author for the current buffer
+" Will use git config user.name if available
+" otherwise g:Author if set
+function! Author()
+    if !exists('b:Author')
+        let b:Author=trim(system("git config user.name"))
+        if !exists('b:Author')
+            if exists('g:Author'))
+                let b:Author=g.Author
+            else
+                let b:Author=''
+            endif
+        endif
+    endif
+    return b:Author
+endfunction
+
+" }}}
+" ABBREVIATIONS ------------------------------------------------ {{{
+nnoremap \sid :let s = synID(line('.'), col('.'), 1) \| echo synIDattr(s, 'name') . ' -> ' . synIDattr(synIDtrans(s), 'name')<CR>
+:inoreabbrev ccopy Copyright  <esc>"=strftime("%Y")<CR>Pa Chris Williams, all rights reserved.
+:inoreabbrev /** /**<CR>*<CR>*/<Up>
+
+" template mappings
+" HTML templates
+nnoremap ,html :-1read ${HOME}/.vim/templates/html/outline.html \| %s/%Y/\=strftime("%Y")/<CR>3jf
+
+" C++ templates
+" Will use the file extension of the current buffer to find the template in templates/cpp
+" type ,cpp in normal (command) mode
+nnoremap ,cpp :let cpp = { 'Author': Author(), 'class_name': expand('%:t:r'), 'namespace' : expand('%:p:h:t') }\|
+    \ :let cpp.namespace_open = "namespace " .. cpp.namespace .. " {" \|
+    \ :let cpp.namespace_close = "} // namespace " .. cpp.namespace \|
+    \ :let cpp.NAMESPACE = substitute(cpp.namespace, '\(\w\+\)', '\U\1\E', '') \|
+    \ :let cpp.CLASS_NAME = substitute(cpp.class_name, '\(\w\+\)', '\U\1\E', '') \| -1read ${HOME}/.vim/templates/cpp/%:e.template \| %s/%Y%/\=strftime("%Y")/ \| %s/%\(\w\+\)%/\=get(cpp, submatch(1), '')/g<CR>3jf
+
 " }}}

@@ -1,0 +1,17 @@
+/**
+* class %class_name%
+* Copyright (C) %Y% %Author%
+*/
+#include "%class_name%.h"
+
+%namespace_open%
+
+%class_name%::%class_name%()
+{
+}
+
+%class_name%::~%class_name%()
+{
+}
+
+%namespace_close%
